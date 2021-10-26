@@ -1,8 +1,12 @@
+import 'package:flutter_application_1/http/core/dio_adapter.dart';
+import 'package:flutter_application_1/http/core/hi_adapter.dart';
+import 'package:flutter_application_1/http/core/hi_error.dart';
+import 'package:flutter_application_1/http/core/mock_adapter.dart';
 import 'package:flutter_application_1/http/request/base_request.dart';
 
 class HiNet {
   HiNet._(); // 构造函数
-  static HiNet? _instance = null; // 不实例化
+  static HiNet? _instance; // 不实例化
   // 懒汉模式
   static HiNet? getInstance() {
     // 通过该函数向整个系统提供实例
@@ -13,21 +17,40 @@ class HiNet {
   }
 
   Future fire(BaseRequest request) async {
-    var response = await send(request);
-    var result = response['data'];
-    printLog(result);
-    return result;
+    HiNetResponse response;
+    var error;
+    try {
+      response = await send(request);
+      var result = response.data;
+      printLog(result);
+
+      var status = response.statusCode;
+      switch (status) {
+        case 200:
+          return result;
+        case 401:
+          throw NeedLogin();
+        case 403:
+          throw NeedAuth(result.toString(), data: result);
+        default:
+          throw HiNetError(status!, result.toString(), data: result);
+      }
+    } on HiNetError catch (e) {
+      error = e;
+      response = e.data;
+      printLog(e);
+    } catch (e) {
+      // 其他异常
+      error = e;
+      printLog(e);
+    }
   }
 
-  Future<dynamic> send<T>(BaseRequest request) async {
+  Future<HiNetResponse<T>> send<T>(BaseRequest request) async {
     printLog('url:${request.url()}');
-    printLog('method:${request.httpMethod()}');
-    request.addHeader("token", "123");
-    printLog('header:${request.header}');
-    return Future.value({
-      "statusCode": 200,
-      "data": {"code": 0, "message": "success"}
-    });
+    // mock 构建请求
+    HiNetAdapter adapter = DioAdapter();
+    return adapter.send(request);
   }
 
   void printLog(log) {

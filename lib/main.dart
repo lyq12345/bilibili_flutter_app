@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/db/hi_cache.dart';
+import 'package:flutter_application_1/http/core/hi_error.dart';
 import 'package:flutter_application_1/http/core/hi_net.dart';
 import 'package:flutter_application_1/http/request/test_request.dart';
+import 'package:flutter_application_1/model/owner.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -51,12 +55,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  @override
+  void initState() {
+    super.initState();
+    HiCache.preInit();
+  }
 
   void _incrementCounter() async {
-    TestRequest request = TestRequest();
-    request.add("aa", "ddd").add("bb", "333");
-    var result = await HiNet.getInstance()?.fire(request);
-    print(result);
+    // TestRequest request = TestRequest();
+    // request.add("aa", "ddd").add("bb", "333").add("requestPrams", "kkkk");
+    // try {
+    //   var result = await HiNet.getInstance()?.fire(request);
+    //   print(result);
+    // } on NeedAuth catch (e) {
+    //   print(e);
+    // } on NeedLogin catch (e) {
+    //   print(e);
+    // } on HiNetError catch (e) {
+    //   print(e);
+    // }
+    // test1();
+    // test();
+    test2();
   }
 
   @override
@@ -109,5 +129,36 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void test() {
+    const jsonString =
+        "{ \"name\": \"flutter\", \"url\": \"https://coding.imooc.com/class/487.html\" }";
+    // Json 转map
+    Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    print('name:${jsonMap['name']}');
+    print('url:${jsonMap['url']}');
+    //Map转Json
+    String json = jsonEncode(jsonMap);
+    print('json:$json');
+  }
+
+  void test1() {
+    var ownerMap = {
+      "name": "伊零Onezero",
+      "face":
+          "http://i2.hdslb.com/bfs/face/1c57a17a7b077ccd19dba58a981a673799b85aef.jpg",
+      "fans": 0
+    };
+    Owner owner = Owner.fromJson(ownerMap);
+    print('name:${owner.name}');
+    print('face:${owner.face}');
+    print('fans:${owner.fans}');
+  }
+
+  void test2() {
+    HiCache.getInstance()?.setString("aa", "1234");
+    var value = HiCache.getInstance()?.get("aa");
+    print('value:$value');
   }
 }
