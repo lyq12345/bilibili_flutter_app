@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/db/hi_cache.dart';
 import 'package:flutter_application_1/http/core/hi_error.dart';
 import 'package:flutter_application_1/http/core/hi_net.dart';
+import 'package:flutter_application_1/http/dao/login_dao.dart';
 import 'package:flutter_application_1/http/request/test_request.dart';
 import 'package:flutter_application_1/model/owner.dart';
 import 'dart:convert';
@@ -76,7 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
     // test1();
     // test();
-    test2();
+    // test2();
+    testLogin();
   }
 
   @override
@@ -160,5 +162,20 @@ class _MyHomePageState extends State<MyHomePage> {
     HiCache.getInstance()?.setString("aa", "1234");
     var value = HiCache.getInstance()?.get("aa");
     print('value:$value');
+  }
+
+  void testLogin() async {
+    try {
+      // var result =
+      //     await LoginDao.registration('lyq', 'lyq990515', '10344277', '2557');
+      var result2 = await LoginDao.login('lyq', 'lyq990515');
+      print(result2);
+    } on NeedAuth catch (e) {
+      print(e);
+    } on HiNetError catch (e) {
+      print(e);
+    }
+
+    ;
   }
 }

@@ -35,12 +35,19 @@ abstract class BaseRequest {
   bool needLogin();
   Map<String, String> params = Map();
   // 添加参数
-  BaseRequest add(String k, Object v) {
+  BaseRequest add(String k, Object? v) {
     params[k] = v.toString();
     return this;
   }
 
-  Map<String, dynamic> header = Map();
+  // Map<String, dynamic> header = Map();
+  Map<String, dynamic> header = {
+    'course-flag': 'fa',
+    //https://coding.imooc.com/class/487.html 公告获取
+    'auth-token': 'ZmEtMjAyMS0wNC0xMiAyMToyMjoyMC1mYQ==fa',
+    // 'boarding-pass': '登录成功返回的boarding-pass'
+  };
+
   // 添加header
   BaseRequest addHeader(String k, Object v) {
     header[k] = v.toString();
