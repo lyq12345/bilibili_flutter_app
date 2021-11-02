@@ -1,3 +1,6 @@
+import 'package:flutter_application_1/http/core/hi_error.dart';
+import 'package:flutter_application_1/http/dao/login_dao.dart';
+
 enum HttpMethod { GET, POST, DELETE }
 // 基础请求
 
@@ -22,11 +25,15 @@ abstract class BaseRequest {
       }
     }
 
-    // Http和Https切换r
+    // Http和Https切换
     if (useHttps) {
       uri = Uri.https(authority(), pathStr, params);
     } else {
       uri = Uri.http(authority(), pathStr, params);
+    }
+    if (needLogin()) {
+      // 给需要登录的接口携带登录令牌
+      addHeader(LoginDao.BOARDING_PASS, LoginDao.getBoardingPass());
     }
     print('url:${uri.toString()}');
     return uri.toString();

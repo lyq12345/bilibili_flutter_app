@@ -8,11 +8,11 @@ class HiCache {
   }
 
   static HiCache? _instance;
-  static HiCache? getInstance() {
+  static HiCache getInstance() {
     if (_instance == null) {
       _instance = HiCache._();
     }
-    return _instance;
+    return _instance!;
   }
 
   void init() async {
@@ -26,16 +26,20 @@ class HiCache {
   }
 
 // 预初始化，防止在使用get时，prefs还未完成初始化
-  static Future<HiCache?> preInit() async {
+  static Future<HiCache> preInit() async {
     if (_instance == null) {
       var prefs = await SharedPreferences.getInstance();
       _instance = HiCache._pre(prefs);
     }
-    return _instance;
+    return _instance!;
   }
 
   setString(String key, String value) {
     prefs?.setString(key, value);
+  }
+
+  clearCache() {
+    prefs?.clear();
   }
 
   setDouble(String key, double value) {
@@ -54,7 +58,11 @@ class HiCache {
     prefs?.setStringList(key, value);
   }
 
-  get(String key) {
-    return prefs?.get(key);
+  T? get<T>(String key) {
+    var result = prefs?.get(key);
+    if (result != null) {
+      return result as T;
+    }
+    return null;
   }
 }

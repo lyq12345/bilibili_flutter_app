@@ -8,12 +8,12 @@ class HiNet {
   HiNet._(); // 构造函数
   static HiNet? _instance; // 不实例化
   // 懒汉模式
-  static HiNet? getInstance() {
+  static HiNet getInstance() {
     // 通过该函数向整个系统提供实例
     if (_instance == null) {
       _instance = HiNet._();
     }
-    return _instance;
+    return _instance!;
   }
 
   Future fire(BaseRequest request) async {
