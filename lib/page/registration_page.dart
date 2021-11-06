@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/http/core/hi_error.dart';
 import 'package:flutter_application_1/http/dao/login_dao.dart';
+import 'package:flutter_application_1/navigator/hi_navigator.dart';
 import 'package:flutter_application_1/util/string_util.dart';
 import 'package:flutter_application_1/util/toast.dart';
 import 'package:flutter_application_1/widget/appbar.dart';
@@ -10,9 +10,8 @@ import 'package:flutter_application_1/widget/login_effect.dart';
 import 'package:flutter_application_1/widget/login_input.dart';
 
 class RegistrationPage extends StatefulWidget {
-  final VoidCallback onJumpToLogin;
-  const RegistrationPage({Key? key, required this.onJumpToLogin})
-      : super(key: key);
+  // final VoidCallback onJumpToLogin;
+  const RegistrationPage({Key? key}) : super(key: key);
 
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
@@ -30,7 +29,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar("注册", "登录", widget.onJumpToLogin),
+        appBar: appBar("注册", "登录", () {
+          HiNavigator.getInstance().onJumpTo(RouteStatus.login);
+        }),
         body: Container(
           child: ListView(
             // 自适应键盘弹起 防止遮挡
@@ -145,9 +146,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (result['code'] == 0) {
         print('注册成功！');
         showToast('注册成功！');
-        if (widget.onJumpToLogin != null) {
-          widget.onJumpToLogin();
-        }
+        HiNavigator.getInstance().onJumpTo(RouteStatus.login);
       } else {
         print(result['msg']);
         showWarnToast(result['msg']);
