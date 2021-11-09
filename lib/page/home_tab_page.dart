@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/http/core/hi_error.dart';
 import 'package:flutter_application_1/http/dao/home_dao.dart';
 import 'package:flutter_application_1/model/home_mo.dart';
-import 'package:flutter_application_1/util/hi_banner.dart';
+import 'package:flutter_application_1/model/video_model.dart';
+import 'package:flutter_application_1/widget/hi_banner.dart';
 import 'package:flutter_application_1/util/toast.dart';
 import 'package:flutter_application_1/widget/video_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomeTabPage extends StatefulWidget {
-  final String? categoryName;
+  final String categoryName;
   final List<BannerMo>? bannerList;
   const HomeTabPage({
     this.bannerList,
-    this.categoryName,
+    required this.categoryName,
     Key? key,
   }) : super(key: key);
 
@@ -20,7 +21,8 @@ class HomeTabPage extends StatefulWidget {
   _HomeTabPageState createState() => _HomeTabPageState();
 }
 
-class _HomeTabPageState extends State<HomeTabPage> {
+class _HomeTabPageState extends State<HomeTabPage>
+    with AutomaticKeepAliveClientMixin {
   List<VideoMo> videoList = [];
   int pageIndex = 1;
   @override
@@ -31,6 +33,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return MediaQuery.removePadding(
         removeTop: true,
         context: context,
@@ -63,7 +66,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
   _banner() {
     return Padding(
         padding: EdgeInsets.only(left: 5, right: 5),
-        child: HiBanner(widget.bannerList));
+        child: HiBanner(widget.bannerList!));
   }
 
   void _loadData({loadMore = false}) async {
@@ -72,16 +75,16 @@ class _HomeTabPageState extends State<HomeTabPage> {
     }
     var currentIndex = pageIndex + (loadMore ? 1 : 0);
     try {
-      HomeMo result = await HomeDao.get(widget.categoryName!,
+      HomeMo result = await HomeDao.get(widget.categoryName,
           pageIndex: currentIndex, pageSize: 50);
       setState(() {
         if (loadMore) {
-          if (result.videoList!.isNotEmpty) {
-            videoList = [...videoList, ...?result.videoList];
+          if (result.videoList.isNotEmpty) {
+            videoList = [...videoList, ...result.videoList];
             pageIndex++;
           }
         } else {
-          videoList = result.videoList!;
+          videoList = result.videoList;
         }
       });
     } on NeedAuth catch (e) {
@@ -92,4 +95,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
       showWarnToast(e.message);
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

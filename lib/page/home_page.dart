@@ -23,7 +23,7 @@ class _HomePageState extends HiState<HomePage>
   var listener;
   List<CategoryMo> categoryList = [];
   List<BannerMo> bannerList = [];
-  TabController? _controller;
+  late TabController _controller;
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class _HomePageState extends HiState<HomePage>
   @override
   void dispose() {
     HiNavigator.getInstance().removeListener(this.listener);
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -63,7 +63,6 @@ class _HomePageState extends HiState<HomePage>
           ),
           Container(
             color: Colors.white,
-            padding: EdgeInsets.only(top: 30),
             child: _tabBar(),
           ),
           Flexible(
@@ -72,7 +71,7 @@ class _HomePageState extends HiState<HomePage>
                   children: categoryList.map((tab) {
                     return HomeTabPage(
                       bannerList: tab.name == '推荐' ? bannerList : null,
-                      categoryName: tab.name!,
+                      categoryName: tab.name,
                     );
                   }).toList()))
         ],
@@ -97,7 +96,7 @@ class _HomePageState extends HiState<HomePage>
             child: Padding(
               padding: EdgeInsets.only(left: 5, right: 5),
               child: Text(
-                tab.name!,
+                tab.name,
                 style: TextStyle(fontSize: 16),
               ),
             ),

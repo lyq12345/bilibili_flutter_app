@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/home_mo.dart';
+import 'package:flutter_application_1/model/video_model.dart';
 import 'package:flutter_application_1/navigator/hi_navigator.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
 class HiBanner extends StatelessWidget {
-  final List<BannerMo>? bannerList;
+  final List<BannerMo> bannerList;
   final double bannerHeight;
   final EdgeInsetsGeometry? padding;
   const HiBanner(this.bannerList,
@@ -22,10 +23,10 @@ class HiBanner extends StatelessWidget {
   _banner() {
     var right = 10 + (padding?.horizontal ?? 0) / 2;
     return Swiper(
-      itemCount: bannerList!.length,
+      itemCount: bannerList.length,
       autoplay: true,
       itemBuilder: (BuildContext context, int index) {
-        return _image(bannerList?[index]);
+        return _image(bannerList[index]);
       },
       pagination: SwiperPagination(
           alignment: Alignment.bottomRight,
@@ -35,18 +36,18 @@ class HiBanner extends StatelessWidget {
     );
   }
 
-  _image(BannerMo? bannerMo) {
+  _image(BannerMo bannerMo) {
     return InkWell(
       onTap: () {
-        print(bannerMo?.title);
-        _handleClick(bannerMo!);
+        print(bannerMo.title);
+        _handleClick(bannerMo);
       },
       child: Container(
         padding: padding,
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(6)),
           child: Image.network(
-            bannerMo!.cover!,
+            bannerMo.cover,
             fit: BoxFit.cover,
           ),
         ),

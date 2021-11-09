@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/home_mo.dart';
+import 'package:flutter_application_1/model/video_model.dart';
 import 'package:flutter_application_1/navigator/hi_navigator.dart';
 import 'package:flutter_application_1/util/format_util.dart';
+import 'package:flutter_application_1/util/view_util.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class VideoCard extends StatelessWidget {
-  final VideoMo? videoMo;
-  const VideoCard({Key? key, this.videoMo}) : super(key: key);
+  final VideoMo videoMo;
+  const VideoCard({Key? key, required this.videoMo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          print(videoMo?.url);
+          print(videoMo.url);
           HiNavigator.getInstance()
               .onJumpTo(RouteStatus.detail, args: {"videoMo": videoMo});
         },
         child: SizedBox(
           height: 200,
           child: Card(
-            //取消卡片边距
+            //取消卡片默认边距
             margin: EdgeInsets.only(left: 4, right: 4, bottom: 8),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5),
@@ -39,13 +41,7 @@ class VideoCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        FadeInImage.memoryNetwork(
-          height: 120,
-          width: size.width / 2 - 20,
-          placeholder: kTransparentImage,
-          image: videoMo!.cover!,
-          fit: BoxFit.cover,
-        ),
+        cachedImage(videoMo.cover, width: size.width / 2 - 10, height: 120),
         Positioned(
             left: 0,
             right: 0,
@@ -61,9 +57,9 @@ class VideoCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _iconText(Icons.ondemand_video, videoMo!.view!),
-                  _iconText(Icons.favorite_border, videoMo!.favorite!),
-                  _iconText(null, videoMo!.duration!)
+                  _iconText(Icons.ondemand_video, videoMo.view),
+                  _iconText(Icons.favorite_border, videoMo.favorite),
+                  _iconText(null, videoMo.duration)
                 ],
               ),
             ))
@@ -76,7 +72,7 @@ class VideoCard extends StatelessWidget {
     if (iconData != null) {
       views = countFormat(count);
     } else {
-      views = durationTransform(videoMo!.duration!);
+      views = durationTransform(videoMo.duration);
     }
     return Row(
       children: [
@@ -106,8 +102,8 @@ class VideoCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            videoMo!.title!,
-            maxLines: 12,
+            videoMo.title,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: 12, color: Colors.black87),
           ),
@@ -118,24 +114,19 @@ class VideoCard extends StatelessWidget {
   }
 
   _owner() {
-    var owner = videoMo!.owner;
+    var owner = videoMo.owner;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                owner!.face!,
-                width: 24,
-                height: 24,
-              ),
-            ),
+                borderRadius: BorderRadius.circular(12),
+                child: cachedImage(owner.face, height: 24, width: 24)),
             Padding(
               padding: EdgeInsets.only(left: 8),
               child: Text(
-                owner.name!,
+                owner.name,
                 style: TextStyle(fontSize: 11, color: Colors.black87),
               ),
             )

@@ -18,6 +18,7 @@ import 'package:flutter_application_1/util/color.dart';
 import 'package:flutter_application_1/util/toast.dart';
 
 import 'model/home_mo.dart';
+import 'model/video_model.dart';
 
 void main() {
   runApp(const BiliApp());
@@ -65,7 +66,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
         RouteJumpListener(onJumpTo: (RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
       if (routeStatus == RouteStatus.detail) {
-        this.videoModel = args?['videoMo'];
+        this.videoModel = args!['videoMo'];
       }
       notifyListeners();
     }));
@@ -90,7 +91,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
       pages.clear();
       page = pageWrap(BottomNavigator());
     } else if (routeStatus == RouteStatus.detail) {
-      page = pageWrap(VideoDetailPage(videoModel));
+      page = pageWrap(VideoDetailPage(videoModel!));
     } else if (routeStatus == RouteStatus.registration) {
       page = pageWrap(RegistrationPage());
     } else if (routeStatus == RouteStatus.login) {
