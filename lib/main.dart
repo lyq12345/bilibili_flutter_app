@@ -6,7 +6,6 @@ import 'package:flutter_application_1/http/dao/login_dao.dart';
 import 'package:flutter_application_1/http/request/notice_request.dart';
 import 'package:flutter_application_1/http/request/test_request.dart';
 import 'package:flutter_application_1/model/owner.dart';
-import 'package:flutter_application_1/model/video_model.dart';
 import 'package:flutter_application_1/navigator/bottom_navigator.dart';
 import 'package:flutter_application_1/navigator/hi_navigator.dart';
 import 'package:flutter_application_1/page/home_page.dart';
@@ -17,6 +16,8 @@ import 'package:flutter_application_1/page/registration_page.dart';
 import 'package:flutter_application_1/page/video_detail_page.dart';
 import 'package:flutter_application_1/util/color.dart';
 import 'package:flutter_application_1/util/toast.dart';
+
+import 'model/home_mo.dart';
 
 void main() {
   runApp(const BiliApp());
@@ -71,7 +72,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
   }
   RouteStatus _routeStatus = RouteStatus.home;
   List<MaterialPage> pages = [];
-  VideoModel? videoModel;
+  VideoMo? videoModel;
 
   bool get hasLogin => LoginDao.getBoardingPass() != null;
   @override

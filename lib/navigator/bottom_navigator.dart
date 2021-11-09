@@ -24,7 +24,14 @@ class _BottomNavigatorState extends State<BottomNavigator> {
   bool _hasBuild = false;
   @override
   Widget build(BuildContext context) {
-    _pages = [HomePage(), RankingPage(), FavoritePage(), ProfilePage()];
+    _pages = [
+      HomePage(
+        onJumpTo: (index) => _onJumpTo(index, pageChange: false),
+      ),
+      RankingPage(),
+      FavoritePage(),
+      ProfilePage()
+    ];
     if (!_hasBuild) {
       HiNavigator.getInstance().onBottomTabChange(
           initialPage, _pages[initialPage]); // 页面第一次打开时通知打开的是哪个Tab
@@ -35,15 +42,13 @@ class _BottomNavigatorState extends State<BottomNavigator> {
         controller: _controller,
         children: _pages,
         onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          _onJumpTo(index, pageChange: true);
         },
         physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) => _onJumpTo(index, pageChange: true),
+        onTap: (index) => _onJumpTo(index),
         selectedItemColor: _activeColor,
         type: BottomNavigationBarType.fixed,
         items: [
