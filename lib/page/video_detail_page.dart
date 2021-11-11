@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/video_model.dart';
+import 'package:flutter_application_1/widget/appbar.dart';
+import 'package:flutter_application_1/widget/navigation_bar.dart';
 import 'package:flutter_application_1/widget/video_view.dart';
 
 class VideoDetailPage extends StatefulWidget {
@@ -17,14 +20,22 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: Column(
-          children: [
-            Text('视频详情页, vid:${widget.videoModel.vid}'),
-            Text('视频详情页, vid:${widget.videoModel.title}'),
-            _videoView(),
-          ],
-        ));
+      body: MediaQuery.removePadding(
+          removeTop: Platform.isIOS,
+          context: context,
+          child: Column(
+            children: [
+              if (Platform.isIOS)
+                NavigationBar(
+                  color: Colors.black,
+                  statusStyle: StatusStyle.LIGHT_CONTENT,
+                ),
+              _videoView(),
+              Text('视频详情页, vid:${widget.videoModel.vid}'),
+              Text('视频详情页, vid:${widget.videoModel.title}'),
+            ],
+          )),
+    );
   }
 
   _videoView() {
@@ -32,6 +43,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     return VideoView(
       model.url!,
       cover: model.cover,
+      overlayUI: videoAppBar(),
     );
   }
 }
