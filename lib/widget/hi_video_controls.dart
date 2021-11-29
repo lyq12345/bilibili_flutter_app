@@ -375,6 +375,7 @@ class _MaterialControlsState extends State<MaterialControls>
   }
 
   void _playPause() {
+    print('playpause');
     final isFinished = _latestValue.position >= _latestValue.duration;
 
     setState(() {

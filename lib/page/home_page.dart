@@ -5,8 +5,11 @@ import 'package:flutter_application_1/http/dao/home_dao.dart';
 import 'package:flutter_application_1/model/home_mo.dart';
 import 'package:flutter_application_1/navigator/hi_navigator.dart';
 import 'package:flutter_application_1/page/home_tab_page.dart';
+import 'package:flutter_application_1/page/profile_page.dart';
+import 'package:flutter_application_1/page/video_detail_page.dart';
 import 'package:flutter_application_1/util/color.dart';
 import 'package:flutter_application_1/util/toast.dart';
+import 'package:flutter_application_1/widget/hi_tab.dart';
 import 'package:flutter_application_1/widget/loading_container.dart';
 import 'package:flutter_application_1/widget/navigation_bar.dart';
 import 'package:underline_indicator/underline_indicator.dart';
@@ -20,25 +23,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends HiState<HomePage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin,
+        WidgetsBindingObserver {
   var listener;
   List<CategoryMo> categoryList = [];
   List<BannerMo> bannerList = [];
   late TabController _controller;
   bool _isLoading = true;
+  Widget? _currentPage;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     _controller = TabController(length: categoryList.length, vsync: this);
     // 页面初始化时注册一个监听
     HiNavigator.getInstance().addListener(this.listener = (current, pre) {
       print('current:${current.page}');
       print('pre:${pre.page}');
+      this._currentPage = current.page;
       if (widget == current.page || current.page is HomePage) {
         print('打开了首页：onResume');
       } else if (widget == pre?.page || pre?.page is HomePage) {
         print('首页：onPause');
+      }
+      //当页面返回到首页恢复首页的状态栏样式
+      if (pre?.page is VideoDetailPage && !(current.page is ProfilePage)) {
+        // var statusStyle = StatusStyle.DARK_CONTENT;
+        // changeStatusBar()
       }
     });
     loadData();
@@ -46,9 +60,31 @@ class _HomePageState extends HiState<HomePage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     HiNavigator.getInstance().removeListener(this.listener);
     _controller.dispose();
     super.dispose();
+  }
+
+  // 监听生命周期变化
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print(':didChangeAppLifecycleState: ${state}');
+    switch (state) {
+      case AppLifecycleState.inactive: // 出于这种状态下的应用假设他们可能在仍核实后暂停
+        break;
+      case AppLifecycleState.resumed: // 从后台切换前台，界面可见
+        // fix 安卓压后台，状态栏字体变白问题
+        // if (!(_currentPage is VideoDetailPage)) {
+        //   changeStatusBar()
+        // }
+        break;
+      case AppLifecycleState.paused: // 界面不可见，后台
+        break;
+      case AppLifecycleState.detached: // app结束时调用
+        break;
+    }
   }
 
   @override
@@ -86,25 +122,18 @@ class _HomePageState extends HiState<HomePage>
   bool get wantKeepAlive => true;
 
   _tabBar() {
-    return TabBar(
-        controller: _controller,
-        isScrollable: true,
-        labelColor: Colors.black,
-        indicator: UnderlineIndicator(
-            strokeCap: StrokeCap.round,
-            borderSide: BorderSide(color: primary, width: 3),
-            insets: EdgeInsets.only(left: 15, right: 15)),
-        tabs: categoryList.map<Tab>((tab) {
-          return Tab(
-            child: Padding(
-              padding: EdgeInsets.only(left: 5, right: 5),
-              child: Text(
-                tab.name,
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          );
-        }).toList());
+    return HiTab(
+      categoryList.map<Tab>((tab) {
+        return Tab(
+          text: tab.name,
+        );
+      }).toList(),
+      controller: _controller,
+      fontSize: 16,
+      borderWidth: 3,
+      insets: 13,
+      unselectedLabelColor: Colors.black54,
+    );
   }
 
   void loadData() async {

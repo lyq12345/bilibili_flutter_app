@@ -6,7 +6,7 @@ import 'package:flutter_application_1/page/login_page.dart';
 import 'package:flutter_application_1/page/registration_page.dart';
 import 'package:flutter_application_1/page/video_detail_page.dart';
 
-typedef RouteChangeListener(RouteStatusInfo current, RouteStatusInfo pre);
+typedef RouteChangeListener(RouteStatusInfo current, RouteStatusInfo? pre);
 
 /// 创建路由页面
 pageWrap(Widget child) {
@@ -107,7 +107,7 @@ class HiNavigator extends _RouteJumpListener {
     print('hi_navigator:current:${current.page}');
     print('hi_navigator:pre:${_current?.page}}');
     _listeners.forEach((listener) {
-      listener(current, _current!);
+      listener(current, _current);
     });
     _current = current;
   }
